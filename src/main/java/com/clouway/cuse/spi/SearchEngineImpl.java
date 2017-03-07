@@ -38,6 +38,18 @@ class SearchEngineImpl implements SearchEngine {
 
   }
 
+  @Override
+  public void registerAsync(Object instance) {
+    Class instanceClass = instance.getClass();
+    IndexingStrategy strategy = indexingStrategyCatalog.get(instanceClass);
+
+    if (strategy == null) {
+      throw new NotConfiguredIndexingStrategyException();
+    }
+
+    indexRegistry.registerAsync(instance, strategy);
+  }
+
   public <T> Search.SearchBuilder<T> search(Class<T> clazz) {
     return new Search.SearchBuilder<T>(clazz, entityLoader, indexingStrategyCatalog, objectIdFinder);
   }

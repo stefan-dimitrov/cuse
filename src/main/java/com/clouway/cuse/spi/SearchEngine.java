@@ -8,6 +8,7 @@ import java.util.List;
 public interface SearchEngine {
 
   void register(Object object);
+  void registerAsync(Object instance);
 
   <T> Search.SearchBuilder<T> search(Class<T> clazz);
 

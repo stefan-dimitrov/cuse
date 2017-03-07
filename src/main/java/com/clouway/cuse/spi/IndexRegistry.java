@@ -9,6 +9,7 @@ import java.util.List;
 public interface IndexRegistry {
 
   void register(Object instance, IndexingStrategy strategy);
+  void registerAsync(Object instance, IndexingStrategy strategy);
 
   void delete(String indexName, List<Long> objectIds);
 }

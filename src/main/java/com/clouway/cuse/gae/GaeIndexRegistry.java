@@ -12,6 +12,7 @@ import com.google.inject.Provider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 /**
  * @author Ivan Lazov <ivan.lazov@clouway.com>
@@ -37,6 +38,15 @@ public class GaeIndexRegistry implements IndexRegistry {
   }
 
   @Override
+  public void registerAsync(Object instance, IndexingStrategy strategy) {
+    String documentId = strategy.getId(instance);
+
+    Document document = buildDocument(instance, documentId);
+
+    indexDocumentAsync(strategy.getIndexName(), document);
+  }
+
+  @Override
   public void delete(String indexName, List<Long> objectIds) {
     List<String> stringObjectIds = new ArrayList<String>();
     for (Long id : objectIds) {
@@ -54,6 +64,20 @@ public class GaeIndexRegistry implements IndexRegistry {
         throw new IndexCreationFailureException(String.format(INDEX_CREATION_FORMAT, result.getCode(), result.getMessage()));
       }
     }
+
+  }
+
+  private void indexDocumentAsync(String indexName, Document document) {
+    Future<PutResponse> responseFuture = getIndex(indexName).putAsync(document);
+
+
+
+//    for (OperationResult result : putResponse.getResults()) {
+//
+//      if (result.getCode() != StatusCode.OK) {
+//        throw new IndexCreationFailureException(String.format(INDEX_CREATION_FORMAT, result.getCode(), result.getMessage()));
+//      }
+//    }
 
   }
 
